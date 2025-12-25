@@ -35,15 +35,19 @@ export default function AutoLocation() {
 
       const { latitude, longitude } = position.coords;
 
-      // Get location name
-      const location = await reverseGeocode(latitude, longitude);
-
-      if (location) {
-        // Redirect to weather page with detected location
-        window.location.href = `/weather?lat=${latitude}&lon=${longitude}&name=${encodeURIComponent(location.name)}&auto=true`;
-      } else {
-        throw new Error("Could not identify location");
+      // Try to get location name, but fallback to "My Location" if it fails
+      let locationName = "My Location";
+      try {
+        const location = await reverseGeocode(latitude, longitude);
+        if (location && location.name) {
+          locationName = location.name;
+        }
+      } catch (err) {
+        console.warn("Reverse geocoding failed, using default name:", err);
       }
+
+      // Redirect to weather page with detected location
+      window.location.href = `/weather?lat=${latitude}&lon=${longitude}&name=${encodeURIComponent(locationName)}`;
     } catch (err: any) {
       console.error("Geolocation error:", err);
       
