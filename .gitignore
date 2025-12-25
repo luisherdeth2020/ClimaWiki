@@ -14,9 +14,10 @@ pnpm-debug.log*
 
 
 # environment variables
-# Note: .env is committed because it only contains a free tier OpenWeatherMap API key
-# For sensitive keys, use .env.local instead
+# NEVER commit .env files with API keys
+.env
 .env.local
+.env.production
 .env.production.local
 
 # macOS-specific files
