@@ -1,16 +1,10 @@
 ---
 /**
- * Daily Forecast Page (7 Days)
- * 
- * Extended forecast showing:
- * - Today's summary with confidence indicator
- * - Short-term forecast (2-3 days) - High confidence
- * - Extended forecast (4-7 days) - Decreasing confidence
- * - Temperature ranges for low-confidence days
- * - Clear visual hierarchy based on reliability
+ * Forecast Page - Redirects to weather page for now
+ * TODO: Implement client-side forecast page
  */
 
-import BaseLayout from "../layouts/BaseLayout.astro";
+return Astro.redirect("/welcome");
 import WeatherIcon from "../components/WeatherIcon.astro";
 import { fetchCompleteWeather } from "../services/weather.service";
 import { 
