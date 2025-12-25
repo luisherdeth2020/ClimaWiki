@@ -1,0 +1,45 @@
+import { c as createComponent, i as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_CoLVhjdj.mjs';
+import 'piccolore';
+import { $ as $$BaseLayout } from '../chunks/BaseLayout_BlIK-sSH.mjs';
+import { A as AutoLocation, L as LocationSearch } from '../chunks/AutoLocation_NHYnkwXG.mjs';
+export { renderers } from '../renderers.mjs';
+
+const $$Welcome = createComponent(($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "BaseLayout", $$BaseLayout, { "title": "ClimaWiki - Weather Forecast You Can Trust" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<main class="min-h-screen flex items-center justify-center px-4"> <div class="max-w-2xl w-full text-center">  <div class="mb-12"> <h1 class="text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+ClimaWiki
+</h1> <p class="text-xl text-gray-300">
+Weather Forecast You Can Trust
+</p> </div>  <div class="space-y-6 mb-12">  <div class="glass rounded-3xl p-8 hover:bg-white/10 transition-all group"> <div class="flex items-center justify-center gap-6"> <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"> ${renderComponent($$result2, "AutoLocation", AutoLocation, { "client:load": true, "client:component-hydration": "load", "client:component-path": "/Users/luisherdeth/Documents/ClimaWiki/src/islands/AutoLocation", "client:component-export": "default" })} </div> <div class="text-left flex-1"> <h2 class="text-2xl font-semibold mb-2">Use My Location</h2> <p class="text-gray-400">
+Automatically detect where you are
+</p> </div> </div> </div>  <div class="flex items-center gap-4"> <div class="flex-1 h-px bg-white/10"></div> <span class="text-gray-500 text-sm uppercase tracking-wide">Or</span> <div class="flex-1 h-px bg-white/10"></div> </div>  <div> <h3 class="text-lg font-medium mb-4 text-gray-300">
+Search for a City
+</h3> ${renderComponent($$result2, "LocationSearch", LocationSearch, { "client:load": true, "client:component-hydration": "load", "client:component-path": "/Users/luisherdeth/Documents/ClimaWiki/src/islands/LocationSearch", "client:component-export": "default" })} </div> </div>  <div> <h3 class="text-sm uppercase tracking-wide text-gray-500 mb-4">
+Popular Cities
+</h3> <div class="grid grid-cols-3 gap-3"> <a href="/weather?lat=40.7128&lon=-74.0060&name=New%20York" class="glass rounded-xl p-3 hover:bg-white/10 transition-colors text-sm">
+New York
+</a> <a href="/weather?lat=51.5074&lon=-0.1278&name=London" class="glass rounded-xl p-3 hover:bg-white/10 transition-colors text-sm">
+London
+</a> <a href="/weather?lat=35.6762&lon=139.6503&name=Tokyo" class="glass rounded-xl p-3 hover:bg-white/10 transition-colors text-sm">
+Tokyo
+</a> <a href="/weather?lat=48.8566&lon=2.3522&name=Paris" class="glass rounded-xl p-3 hover:bg-white/10 transition-colors text-sm">
+Paris
+</a> <a href="/weather?lat=40.4168&lon=-3.7038&name=Madrid" class="glass rounded-xl p-3 hover:bg-white/10 transition-colors text-sm">
+Madrid
+</a> <a href="/weather?lat=-34.6037&lon=-58.3816&name=Buenos%20Aires" class="glass rounded-xl p-3 hover:bg-white/10 transition-colors text-sm">
+Buenos Aires
+</a> </div> </div>  <div class="mt-12 text-sm text-gray-500"> <p>We need your location to show accurate weather forecasts.</p> <p class="mt-1">Your location data is never stored or shared.</p> </div> </div> </main> ` })}`;
+}, "/Users/luisherdeth/Documents/ClimaWiki/src/pages/welcome.astro", void 0);
+
+const $$file = "/Users/luisherdeth/Documents/ClimaWiki/src/pages/welcome.astro";
+const $$url = "/welcome";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$Welcome,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };

@@ -1,0 +1,87 @@
+---
+/**
+ * Base Layout
+ * 
+ * Main layout wrapper for all pages in ClimaWiki.
+ * Handles:
+ * - Meta tags and SEO
+ * - Global styles import
+ * - Viewport configuration for mobile-first design
+ * - Theme configuration (dark mode)
+ */
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "ClimaWiki - Weather Forecast You Can Trust",
+  description = "Reliable, clear, and transparent weather forecasts. Know what's coming, when it's coming.",
+} = Astro.props;
+
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1a202c" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <title>{title}</title>
+  </head>
+  <body class="bg-slate-900 text-white antialiased min-h-screen">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  /* Custom scrollbar for better UX */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  html, body {
+    overflow-x: hidden;
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Fix iOS safe areas */
+  @supports (padding: max(0px)) {
+    body {
+      padding-left: max(0px, env(safe-area-inset-left));
+      padding-right: max(0px, env(safe-area-inset-right));
+      padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+  }
+</style>
