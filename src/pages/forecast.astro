@@ -10,6 +10,8 @@
  * - Clear visual hierarchy based on reliability
  */
 
+export const prerender = false; // Enable SSR for this page only
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 import WeatherIcon from "../components/WeatherIcon.astro";
 import { fetchCompleteWeather } from "../services/weather.service";
