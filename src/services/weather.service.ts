@@ -337,23 +337,43 @@ export async function geocodeCity(query: string): Promise<GeocodingResult[]> {
 }
 
 /**
- * Reverse geocode coordinates to location name
+ * Reverse geocode coordinates to location name using Nominatim
  */
 export async function reverseGeocode(
   lat: number,
   lon: number
 ): Promise<GeocodingResult | null> {
-  const url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`;
+  const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(nominatimUrl, {
+      headers: {
+        "User-Agent": "ClimaWiki Weather App",
+      },
+    });
 
     if (!response.ok) {
-      throw new Error(`Reverse geocoding error: ${response.status} ${response.statusText}`);
+      throw new Error(`Reverse geocoding error: ${response.status}`);
     }
 
-    const data: GeocodingResult[] = await response.json();
-    return data[0] || null;
+    const data: any = await response.json();
+    
+    // Extract city/town name
+    const cityName = 
+      data.address?.city || 
+      data.address?.town || 
+      data.address?.village || 
+      data.address?.municipality ||
+      data.name ||
+      "My Location";
+
+    return {
+      name: cityName,
+      lat: parseFloat(data.lat),
+      lon: parseFloat(data.lon),
+      country: data.address?.country_code?.toUpperCase() || "",
+      state: data.address?.state || "",
+    };
   } catch (error) {
     console.error("Failed to reverse geocode:", error);
     throw error;
