@@ -9,7 +9,7 @@ import preact from '@astrojs/preact';
 export default defineConfig({
   output: 'server', // Enable SSR
   adapter: netlify({
-    edgeMiddleware: false
+    edgeMiddleware: true
   }),
   
   vite: {
