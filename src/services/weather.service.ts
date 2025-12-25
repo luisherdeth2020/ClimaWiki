@@ -237,7 +237,11 @@ export async function fetchCompleteWeather(
 
     // Build processed data
     const processedData: ProcessedWeatherData = {
-      location,
+      location: {
+        ...location,
+        name: currentData.name || location.name, // Use real city name from API
+        country: currentData.sys.country,
+      },
       current: {
         temp: Math.round(currentData.main.temp),
         feelsLike: Math.round(currentData.main.feels_like),
