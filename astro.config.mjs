@@ -7,8 +7,11 @@ import preact from '@astrojs/preact';
 
 // https://astro.build/config
 export default defineConfig({
-  // In Astro 5: use adapter + `export const prerender = false` in pages that need SSR
-  adapter: netlify(),
+  // Hybrid rendering: static by default, SSR for specific pages
+  output: 'server', // This enables SSR
+  adapter: netlify({
+    imageCDN: false,
+  }),
   
   vite: {
     plugins: [tailwindcss()]

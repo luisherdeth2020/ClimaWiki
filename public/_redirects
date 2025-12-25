@@ -1,5 +1,0 @@
-# SSR routes (dynamic pages with query params)
-/weather  /.netlify/functions/ssr  200
-/forecast  /.netlify/functions/ssr  200
-
-# Static routes are served from dist/ automatically
