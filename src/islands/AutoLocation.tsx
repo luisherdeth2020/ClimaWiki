@@ -7,8 +7,10 @@
 import { h } from "preact";
 import { useState } from "preact/hooks";
 import { reverseGeocode } from "../services/weather.service";
+import { useTranslation } from "../i18n/translations";
 
 export default function AutoLocation() {
+  const t = useTranslation();
   const [isDetecting, setIsDetecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,13 +53,13 @@ export default function AutoLocation() {
     } catch (err: any) {
       console.error("Geolocation error:", err);
       
-      let errorMessage = "Failed to detect location";
+      let errorMessage = t.autoLocation.failed;
       if (err.code === 1) {
-        errorMessage = "Location permission denied";
+        errorMessage = t.autoLocation.permissionDenied;
       } else if (err.code === 2) {
-        errorMessage = "Location unavailable";
+        errorMessage = t.autoLocation.locationUnavailable;
       } else if (err.code === 3) {
-        errorMessage = "Location request timed out";
+        errorMessage = t.autoLocation.timeout;
       }
       
       setError(errorMessage);
@@ -71,8 +73,8 @@ export default function AutoLocation() {
       onClick={detectLocation}
       disabled={isDetecting}
       class="p-2 rounded-full hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed relative group"
-      aria-label="Use my location"
-      title="Use my location"
+      aria-label={t.autoLocation.useMyLocation}
+      title={t.autoLocation.useMyLocation}
     >
       {isDetecting ? (
         <div class="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>

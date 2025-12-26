@@ -248,6 +248,9 @@ export interface ProcessedWeatherData {
     humidity: number;
     pressure: number; // hPa
     precipitation: number; // probability %
+    rainfall: number; // mm in last 3h (0 if no rain)
+    rainType: string; // "light rain", "heavy rain", "thunderstorm", etc.
+    snowfall: number; // mm in last 3h (0 if no snow)
     updatedAt: Date;
   };
   hourly: Array<{
@@ -264,7 +267,7 @@ export interface ProcessedWeatherData {
     condition: string;
     icon: string;
     precipitation: number;
-    confidence: "high" | "medium" | "low"; // Based on forecast day
+    confidence: ForecastConfidence; // Based on forecast day
   }>;
 }
 

@@ -10,12 +10,14 @@ import { h } from "preact";
 import { useState, useEffect, useRef } from "preact/hooks";
 import { geocodeCity } from "../services/weather.service";
 import type { GeocodingResult } from "../services/weather.service";
+import { useTranslation } from "../i18n/translations";
 
 interface Props {
   onLocationSelect?: (location: GeocodingResult) => void;
 }
 
 export default function LocationSearch({ onLocationSelect }: Props) {
+  const t = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GeocodingResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -83,7 +85,7 @@ export default function LocationSearch({ onLocationSelect }: Props) {
           value={query}
           onInput={(e) => handleInputChange((e.target as HTMLInputElement).value)}
           onFocus={() => setIsOpen(results.length > 0)}
-          placeholder="Search city or address..."
+          placeholder={t.search.placeholder}
           class="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-3 pl-12 text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:bg-white/15 transition-all"
         />
         <svg
@@ -150,8 +152,8 @@ export default function LocationSearch({ onLocationSelect }: Props) {
       {/* No results message */}
       {isOpen && !isSearching && query.length >= 2 && results.length === 0 && (
         <div class="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-white/10 rounded-2xl p-5 text-center text-gray-400">
-          <p>No locations found for "{query}"</p>
-          <p class="text-sm mt-1">Try a different city or address</p>
+          <p>{t.search.noResults} "{query}"</p>
+          <p class="text-sm mt-1">{t.search.tryDifferent}</p>
         </div>
       )}
     </div>

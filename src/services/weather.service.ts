@@ -235,6 +235,17 @@ export async function fetchCompleteWeather(
         };
       });
 
+    // Extract rainfall data from FORECAST (next 3h) instead of historical
+    // This gives more useful data: "how much rain is expected" vs "how much it rained"
+    const nextForecast = forecastData.list[0];
+    const rainfall = nextForecast?.rain?.['3h'] || currentData.rain?.['3h'] || currentData.rain?.['1h'] || 0;
+    
+    // Determine rain type from current weather OR next forecast if current is clear
+    const hasCurrentRain = currentData.weather[0].main === 'Rain' || currentData.weather[0].main === 'Drizzle' || currentData.weather[0].main === 'Thunderstorm';
+    const rainType = hasCurrentRain 
+      ? currentData.weather[0].description 
+      : (nextForecast?.weather[0]?.description || "none");
+
     // Build processed data
     const processedData: ProcessedWeatherData = {
       location: {
@@ -260,6 +271,9 @@ export async function fetchCompleteWeather(
         precipitation: forecastData.list[0]?.pop 
           ? Math.round(forecastData.list[0].pop * 100) 
           : 0,
+        rainfall: Math.round(rainfall * 10) / 10, // Round to 1 decimal place
+        rainType: rainType,
+        snowfall: currentData.snow?.['3h'] || currentData.snow?.['1h'] || 0,
         updatedAt: new Date(),
       },
       hourly: hourlyForecasts,

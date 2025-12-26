@@ -8,8 +8,10 @@ import { useState, useEffect } from "preact/hooks";
 import { fetchCompleteWeather } from "../services/weather.service";
 import { formatTemp, formatDayName, formatPrecipitation, getConfidenceIndicator } from "../utils/format";
 import type { ProcessedWeatherData, Location } from "../types/weather";
+import { useTranslation } from "../i18n/translations";
 
 export default function ForecastPage() {
+  const t = useTranslation();
   const [weatherData, setWeatherData] = useState<ProcessedWeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export default function ForecastPage() {
       })
       .catch((err) => {
         console.error("Failed to fetch weather:", err);
-        setError("Failed to load forecast data");
+        setError(t.weather.failedToLoad);
         setLoading(false);
       });
   }, []);
@@ -61,9 +63,9 @@ export default function ForecastPage() {
     return (
       <div class="min-h-screen flex items-center justify-center px-4">
         <div class="text-center">
-          <p class="text-xl text-red-400 mb-4">{error || "Failed to load forecast"}</p>
+          <p class="text-xl text-red-400 mb-4">{error || t.weather.failedToLoad}</p>
           <a href="/welcome" class="text-blue-400 hover:underline">
-            Go back to home
+            {t.weather.goBackHome}
           </a>
         </div>
       </div>
@@ -108,9 +110,9 @@ export default function ForecastPage() {
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
-                Updated now
+                {t.forecast.updatedNow}
               </p>
-              <h2 class="text-2xl font-light">Today</h2>
+              <h2 class="text-2xl font-light">{t.forecast.today}</h2>
             </div>
             <div class="text-6xl">{getWeatherEmoji(current.icon)}</div>
           </div>
@@ -121,7 +123,7 @@ export default function ForecastPage() {
           </div>
 
           <div class="flex items-center gap-4 text-sm text-gray-400">
-            <span>Low / High</span>
+            <span>{t.forecast.low} / {t.forecast.high}</span>
             <span class="font-medium text-white">
               {formatTemp(todayForecast.tempMin)} / {formatTemp(todayForecast.tempMax)}
             </span>
@@ -132,7 +134,7 @@ export default function ForecastPage() {
       {/* SHORT TERM Section (High Confidence) */}
       <section class="px-4 mb-6">
         <h2 class="text-xs uppercase tracking-wide text-gray-400 mb-3 font-semibold">
-          Short Term
+          {t.forecast.shortTerm}
         </h2>
 
         <div class="space-y-2">
@@ -166,7 +168,7 @@ export default function ForecastPage() {
                 {day.confidence === "high" && (
                   <div class="flex items-center gap-1 mt-1">
                     <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                    <span class="text-xs text-green-400">High</span>
+                    <span class="text-xs text-green-400">{t.forecast.confidenceHigh}</span>
                   </div>
                 )}
               </div>
@@ -179,13 +181,13 @@ export default function ForecastPage() {
       <section class="px-4 mb-6">
         <div class="flex items-center justify-between mb-3">
           <h2 class="text-xs uppercase tracking-wide text-gray-400 font-semibold">
-            Extended Forecast
+            {t.forecast.extendedForecast}
           </h2>
           <div class="flex items-center gap-2 text-xs text-gray-500">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>Previsión orientativa</span>
+            <span>{t.forecast.orientativeForecast}</span>
           </div>
         </div>
 
@@ -212,7 +214,7 @@ export default function ForecastPage() {
                   {/* Show range for low confidence */}
                   {isLowConfidence ? (
                     <div class="mb-1">
-                      <p class="text-sm text-gray-400">Temp Range</p>
+                      <p class="text-sm text-gray-400">{t.forecast.tempRange}</p>
                       <p class="text-lg font-semibold">
                         {formatTemp(day.tempMin)} — {formatTemp(day.tempMax)}
                       </p>
@@ -230,7 +232,7 @@ export default function ForecastPage() {
                       day.confidence === "medium" ? "bg-yellow-500" : "bg-orange-500"
                     }`}></div>
                     <span class={`text-xs ${confidence.color}`}>
-                      {day.confidence === "medium" ? "Medium" : "Low"}
+                      {day.confidence === "medium" ? t.forecast.confidenceMedium : t.forecast.confidenceLow}
                     </span>
                   </div>
                 </div>
@@ -248,10 +250,9 @@ export default function ForecastPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div class="text-sm text-gray-300">
-              <p class="font-medium mb-1">About Forecast Accuracy</p>
+              <p class="font-medium mb-1">{t.forecast.aboutAccuracy}</p>
               <p class="text-gray-400">
-                Weather forecasts become less precise over time. Confidence decreases significantly
-                beyond 3 days. Extended forecasts show temperature ranges to reflect this uncertainty.
+                {t.forecast.aboutAccuracyText}
               </p>
             </div>
           </div>
@@ -265,14 +266,14 @@ export default function ForecastPage() {
             <svg class="w-6 h-6" fill="none" viewBox="0 0 20 20" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
-            <span class="text-xs">Home</span>
+            <span class="text-xs">{t.nav.home}</span>
           </a>
 
           <a href="/saved" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
-            <span class="text-xs">Saved</span>
+            <span class="text-xs">{t.nav.saved}</span>
           </a>
 
           <a href="/settings" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors">
@@ -280,7 +281,7 @@ export default function ForecastPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <span class="text-xs">Settings</span>
+            <span class="text-xs">{t.nav.settings}</span>
           </a>
         </div>
       </nav>

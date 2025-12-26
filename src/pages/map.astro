@@ -2,9 +2,14 @@
 /**
  * Map Page - Interactive Weather Map
  * 
- * Shows a map view with weather overlays
- * For now, redirects to welcome page (future feature)
+ * Leaflet map with Open-Meteo integration
+ * Click on map or enter coordinates to view weather
  */
 
-return Astro.redirect("/welcome");
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MapPage from "../islands/MapPage";
 ---
+
+<BaseLayout title="Weather Map - ClimaWiki">
+  <MapPage client:load />
+</BaseLayout>

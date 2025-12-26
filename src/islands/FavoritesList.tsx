@@ -7,6 +7,7 @@ import { useState, useEffect } from 'preact/hooks';
 import type { FavoriteLocation } from '../services/favorites.service';
 import { getFavorites, removeFavorite } from '../services/favorites.service';
 import { fetchCurrentWeather } from '../services/weather.service';
+import { useTranslation } from '../i18n/translations';
 
 interface FavoriteWithWeather extends FavoriteLocation {
   temp?: number;
@@ -17,6 +18,7 @@ interface FavoriteWithWeather extends FavoriteLocation {
 }
 
 export default function FavoritesList() {
+  const t = useTranslation();
   const [favorites, setFavorites] = useState<FavoriteWithWeather[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +41,7 @@ export default function FavoritesList() {
           const weather = await fetchCurrentWeather(fav.lat, fav.lon);
           return {
             ...fav,
-            temp: weather.temp,
+            temp: weather.main.temp,
             weatherIcon: getWeatherIcon(weather.weather[0]?.main),
             description: weather.weather[0]?.description,
             loading: false,
@@ -60,7 +62,7 @@ export default function FavoritesList() {
   }
 
   function handleRemove(id: string) {
-    if (confirm('Remove this location from favorites?')) {
+    if (confirm(t.favorites.removeConfirm)) {
       removeFavorite(id);
       setFavorites(prev => prev.filter(f => f.id !== id));
     }
@@ -91,10 +93,10 @@ export default function FavoritesList() {
     return (
       <div class="px-4 mt-8">
         <h2 class="text-sm uppercase tracking-wide text-gray-400 mb-3 font-semibold">
-          Saved Locations
+          {t.favorites.savedLocations}
         </h2>
         <div class="glass rounded-2xl p-6 text-center">
-          <div class="animate-pulse">Loading favorites...</div>
+          <div class="animate-pulse">{t.favorites.loadingFavorites}</div>
         </div>
       </div>
     );
@@ -104,12 +106,12 @@ export default function FavoritesList() {
     return (
       <div class="px-4 mt-8">
         <h2 class="text-sm uppercase tracking-wide text-gray-400 mb-3 font-semibold">
-          Saved Locations
+          {t.favorites.savedLocations}
         </h2>
         <div class="glass rounded-2xl p-6 text-center">
-          <p class="text-gray-400 mb-2">No saved locations yet</p>
+          <p class="text-gray-400 mb-2">{t.favorites.noSaved}</p>
           <p class="text-sm text-gray-500">
-            Search for a city and save it to see weather updates here
+            {t.favorites.noSavedDescription}
           </p>
         </div>
       </div>
@@ -117,9 +119,9 @@ export default function FavoritesList() {
   }
 
   return (
-    <div class="px-4 mt-8">
+      <div class="px-4 mt-8">
       <h2 class="text-sm uppercase tracking-wide text-gray-400 mb-3 font-semibold">
-        Saved Locations ({favorites.length})
+        {t.favorites.savedLocations} ({favorites.length})
       </h2>
 
       <div class="space-y-3">
@@ -142,9 +144,9 @@ export default function FavoritesList() {
                   <p class="text-sm text-gray-400">{fav.country}</p>
                 )}
                 {fav.loading ? (
-                  <p class="text-sm text-gray-500 animate-pulse">Loading weather...</p>
+                  <p class="text-sm text-gray-500 animate-pulse">{t.favorites.loadingWeather}</p>
                 ) : fav.error ? (
-                  <p class="text-sm text-red-400">Failed to load</p>
+                  <p class="text-sm text-red-400">{t.favorites.failedToLoad}</p>
                 ) : (
                   <p class="text-sm text-gray-400 capitalize">{fav.description}</p>
                 )}

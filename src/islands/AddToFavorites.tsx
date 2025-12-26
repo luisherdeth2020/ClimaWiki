@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'preact/hooks';
 import { addFavorite, removeFavorite, isFavorite } from '../services/favorites.service';
+import { useTranslation } from '../i18n/translations';
 
 interface Props {
   name: string;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function AddToFavorites({ name, lat, lon, country }: Props) {
+  const t = useTranslation();
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -64,7 +66,7 @@ export default function AddToFavorites({ name, lat, lon, country }: Props) {
         }
         ${loading ? 'opacity-50 cursor-not-allowed' : ''}
       `}
-      aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
+      aria-label={saved ? t.favorites.saved : t.favorites.saveLocation}
     >
       <svg 
         class={`w-5 h-5 transition-all ${saved ? 'fill-current' : 'fill-none'}`} 
@@ -75,7 +77,7 @@ export default function AddToFavorites({ name, lat, lon, country }: Props) {
         <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
       </svg>
       <span class="text-sm">
-        {loading ? 'Saving...' : saved ? 'Saved' : 'Save Location'}
+        {loading ? t.favorites.saving : saved ? t.favorites.saved : t.favorites.saveLocation}
       </span>
     </button>
   );
