@@ -17,7 +17,7 @@ pnpm-debug.log*
 # NEVER commit .env files with API keys
 .env
 .env.local
-.env.production
+# .env.production - ALLOWED for public client-side keys
 .env.production.local
 
 # macOS-specific files
