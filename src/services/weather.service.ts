@@ -16,13 +16,14 @@ import type {
 } from "../types/weather";
 
 // Load API key from environment variable
-// In production (Netlify), this comes from .env file or Netlify UI
+// In production (Cloudflare/Netlify), this comes from environment variables
 // Prefix 'PUBLIC_' makes it available in both client and server code
 const API_KEY = import.meta.env.PUBLIC_OPENWEATHER_API_KEY;
 
-if (!API_KEY) {
-  throw new Error(
-    "Missing OpenWeatherMap API key. Please set PUBLIC_OPENWEATHER_API_KEY in your .env file"
+if (!API_KEY && typeof window !== 'undefined') {
+  // Only warn in browser (runtime), not during build time
+  console.warn(
+    "Missing OpenWeatherMap API key. Please set PUBLIC_OPENWEATHER_API_KEY in your environment variables"
   );
 }
 
