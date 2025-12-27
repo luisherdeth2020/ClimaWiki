@@ -10,7 +10,13 @@ export default defineConfig({
   output: 'static',
   
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    // Inject environment variable from Cloudflare Pages build environment
+    define: {
+      'import.meta.env.PUBLIC_OPENWEATHER_API_KEY': JSON.stringify(
+        process.env.PUBLIC_OPENWEATHER_API_KEY || ''
+      )
+    }
   },
 
   integrations: [preact()]
