@@ -17,7 +17,7 @@ pnpm-debug.log*
 # NEVER commit .env files with API keys
 .env
 .env.local
-.env.production
+# .env.production is committed for Cloudflare Pages (public client-side API key only)
 .env.production.local
 
 # macOS-specific files
