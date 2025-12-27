@@ -1,6 +1,9 @@
 /**
  * TempDisplay - Reactive temperature display component
  * Automatically converts and updates when temperature unit setting changes
+ * 
+ * IMPORTANT: Accesses temperatureUnit.value directly in JSX for reactivity.
+ * Preact automatically tracks signal dependencies in the render function.
  */
 
 import { temperatureUnit } from "../stores/settings.store";
@@ -20,16 +23,20 @@ function celsiusToFahrenheit(celsius: number): number {
 
 /**
  * Reactive temperature display component
- * Subscribes to temperatureUnit signal and updates automatically
+ * Accesses signal.value in JSX - no computed() or useComputed() needed
  */
-export default function TempDisplay({ temp, decimals = 0, className }: TempDisplayProps) {
-  const unit = temperatureUnit.value;
-  
-  const displayTemp = unit === "fahrenheit" 
-    ? celsiusToFahrenheit(temp)
-    : temp;
-  
-  const formatted = `${displayTemp.toFixed(decimals)}°${unit === "fahrenheit" ? "F" : "C"}`;
-  
-  return <span class={className}>{formatted}</span>;
+export default function TempDisplay({
+  temp,
+  decimals = 0,
+  className,
+}: TempDisplayProps) {
+  // Access signal.value directly in JSX
+  // Preact tracks this and re-renders when temperatureUnit changes
+  return (
+    <span class={className}>
+      {temperatureUnit.value === "fahrenheit"
+        ? `${celsiusToFahrenheit(temp).toFixed(decimals)}°F`
+        : `${temp.toFixed(decimals)}°C`}
+    </span>
+  );
 }
