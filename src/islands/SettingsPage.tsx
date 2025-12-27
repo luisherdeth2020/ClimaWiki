@@ -2,14 +2,13 @@
  * Settings Page Island
  * Fully interactive settings page with i18n support
  *
- * Uses Preact Signals for reactive state management:
- * - Signals are imported directly from the store
- * - Components re-render automatically when signal values change
- * - Setter functions update both signal AND localStorage
- * - On mount, we sync signals from localStorage to handle SSR/SSG scenarios
+ * Uses Nano Stores for reactive state management:
+ * - Stores automatically persist to localStorage
+ * - useStore hook provides automatic reactivity
+ * - Works reliably in both dev and production
  */
 
-import { useEffect } from "preact/hooks";
+import { useStore } from "@nanostores/preact";
 import { useTranslation } from "../i18n/translations";
 import LanguageSelector from "./LanguageSelector";
 import type {
@@ -27,17 +26,16 @@ import {
   setWindSpeedUnit,
   setPressureUnit,
   setTheme,
-  syncSettingsFromStorage,
 } from "../stores/settings.store";
 
 export default function SettingsPage() {
   const translations = useTranslation();
 
-  // Sync settings from localStorage when component mounts
-  // This ensures the UI reflects persisted values in client-only mode
-  useEffect(() => {
-    syncSettingsFromStorage();
-  }, []);
+  // Subscribe to stores for reactivity
+  const tempUnit = useStore(temperatureUnit);
+  const windUnit = useStore(windSpeedUnit);
+  const pressUnit = useStore(pressureUnit);
+  const currentTheme = useStore(theme);
 
   return (
     <main class="min-h-screen pb-20">
@@ -96,7 +94,7 @@ export default function SettingsPage() {
                 </p>
               </div>
               <select
-                value={temperatureUnit.value}
+                value={tempUnit}
                 onChange={(e) =>
                   setTemperatureUnit(e.currentTarget.value as TempUnit)
                 }
@@ -120,7 +118,7 @@ export default function SettingsPage() {
                 </p>
               </div>
               <select
-                value={windSpeedUnit.value}
+                value={windUnit}
                 onChange={(e) =>
                   setWindSpeedUnit(e.currentTarget.value as WindUnit)
                 }
@@ -143,7 +141,7 @@ export default function SettingsPage() {
                 </p>
               </div>
               <select
-                value={pressureUnit.value}
+                value={pressUnit}
                 onChange={(e) =>
                   setPressureUnit(e.currentTarget.value as PressureUnit)
                 }
@@ -175,7 +173,7 @@ export default function SettingsPage() {
                 </p>
               </div>
               <select
-                value={theme.value}
+                value={currentTheme}
                 onChange={(e) => setTheme(e.currentTarget.value as Theme)}
                 class="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >

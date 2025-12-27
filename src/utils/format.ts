@@ -20,9 +20,11 @@ function celsiusToFahrenheit(celsius: number): number {
 /**
  * Format temperature with degree symbol and unit (°C or °F)
  * Automatically converts based on user settings
+ * 
+ * NOTE: This function is not reactive. Use TempDisplay component for reactive updates.
  */
 export function formatTemp(temp: number, decimals: number = 0): string {
-  const unit = temperatureUnit.value;
+  const unit = temperatureUnit.get();
   
   if (unit === "fahrenheit") {
     const fahrenheit = celsiusToFahrenheit(temp);

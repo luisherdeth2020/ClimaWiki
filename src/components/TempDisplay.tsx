@@ -2,10 +2,10 @@
  * TempDisplay - Reactive temperature display component
  * Automatically converts and updates when temperature unit setting changes
  * 
- * IMPORTANT: Accesses temperatureUnit.value directly in JSX for reactivity.
- * Preact automatically tracks signal dependencies in the render function.
+ * Uses Nano Stores for reliable reactivity in Astro (works in both dev and production)
  */
 
+import { useStore } from "@nanostores/preact";
 import { temperatureUnit } from "../stores/settings.store";
 
 interface TempDisplayProps {
@@ -23,20 +23,25 @@ function celsiusToFahrenheit(celsius: number): number {
 
 /**
  * Reactive temperature display component
- * Accesses signal.value in JSX - no computed() or useComputed() needed
+ * Uses useStore hook for automatic reactivity
  */
 export default function TempDisplay({
   temp,
   decimals = 0,
   className,
 }: TempDisplayProps) {
-  // Access signal.value directly in JSX
-  // Preact tracks this and re-renders when temperatureUnit changes
+  // useStore subscribes to the atom and re-renders on changes
+  const unit = useStore(temperatureUnit);
+  
+  const displayTemp = unit === "fahrenheit" 
+    ? celsiusToFahrenheit(temp) 
+    : temp;
+  
+  const symbol = unit === "fahrenheit" ? "F" : "C";
+  
   return (
     <span class={className}>
-      {temperatureUnit.value === "fahrenheit"
-        ? `${celsiusToFahrenheit(temp).toFixed(decimals)}°F`
-        : `${temp.toFixed(decimals)}°C`}
+      {displayTemp.toFixed(decimals)}°{symbol}
     </span>
   );
 }
