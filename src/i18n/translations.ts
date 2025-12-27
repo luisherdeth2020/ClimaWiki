@@ -49,6 +49,7 @@ export interface Translations {
   forecast: {
     title: string;
     today: string;
+    tomorrow: string;
     shortTerm: string;
     extendedForecast: string;
     seeFullForecast: string;
@@ -264,6 +265,7 @@ const en: Translations = {
   },
 
   forecast: {
+    tomorrow: "Tomorrow",
     title: "Forecast",
     today: "Today",
     shortTerm: "Short Term",
@@ -286,7 +288,7 @@ const en: Translations = {
   search: {
     placeholder: "Search city or address...",
     searchCity: "Search for a City",
-    noResults: 'No locations found for',
+    noResults: "No locations found for",
     tryDifferent: "Try a different city or address",
   },
 
@@ -303,7 +305,8 @@ const en: Translations = {
   favorites: {
     savedLocations: "Saved Locations",
     noSaved: "No saved locations yet",
-    noSavedDescription: "Search for a city and save it to see weather updates here",
+    noSavedDescription:
+      "Search for a city and save it to see weather updates here",
     removeConfirm: "Remove this location from favorites?",
     saveLocation: "Save Location",
     saved: "Saved",
@@ -428,7 +431,7 @@ const en: Translations = {
     "heavy intensity shower rain": "Heavy Showers",
     "ragged shower rain": "Scattered Showers",
     "light intensity drizzle": "Light Drizzle",
-    "drizzle": "Drizzle",
+    drizzle: "Drizzle",
     "heavy intensity drizzle": "Heavy Drizzle",
     "light intensity drizzle rain": "Light Drizzle",
     "drizzle rain": "Drizzle",
@@ -440,7 +443,7 @@ const en: Translations = {
     "thunderstorm with rain": "Thunderstorm",
     "thunderstorm with heavy rain": "Heavy Thunderstorm",
     "light thunderstorm": "Light Thunderstorm",
-    "thunderstorm": "Thunderstorm",
+    thunderstorm: "Thunderstorm",
     "heavy thunderstorm": "Heavy Thunderstorm",
     "ragged thunderstorm": "Scattered Thunderstorms",
     "thunderstorm with light drizzle": "Thunderstorm & Drizzle",
@@ -500,6 +503,7 @@ const es: Translations = {
   forecast: {
     title: "Pronóstico",
     today: "Hoy",
+    tomorrow: "Mañana",
     shortTerm: "Corto Plazo",
     extendedForecast: "Pronóstico Extendido",
     seeFullForecast: "Ver Pronóstico Completo",
@@ -520,7 +524,7 @@ const es: Translations = {
   search: {
     placeholder: "Buscar ciudad o dirección...",
     searchCity: "Buscar una Ciudad",
-    noResults: 'No se encontraron ubicaciones para',
+    noResults: "No se encontraron ubicaciones para",
     tryDifferent: "Prueba con otra ciudad o dirección",
   },
 
@@ -663,7 +667,7 @@ const es: Translations = {
     "heavy intensity shower rain": "Chubascos Fuertes",
     "ragged shower rain": "Chubascos Dispersos",
     "light intensity drizzle": "Llovizna Ligera",
-    "drizzle": "Llovizna",
+    drizzle: "Llovizna",
     "heavy intensity drizzle": "Llovizna Fuerte",
     "light intensity drizzle rain": "Llovizna Ligera",
     "drizzle rain": "Llovizna",
@@ -675,7 +679,7 @@ const es: Translations = {
     "thunderstorm with rain": "Tormenta con Lluvia",
     "thunderstorm with heavy rain": "Tormenta con Lluvia Fuerte",
     "light thunderstorm": "Tormenta Ligera",
-    "thunderstorm": "Tormenta",
+    thunderstorm: "Tormenta",
     "heavy thunderstorm": "Tormenta Fuerte",
     "ragged thunderstorm": "Tormentas Dispersas",
     "thunderstorm with light drizzle": "Tormenta con Llovizna",
@@ -742,12 +746,17 @@ export function useTranslation() {
  * Translate rain description from OpenWeatherMap API
  * Falls back to original description if no translation exists
  */
-export function translateRainDescription(description: string, lang: Language): string {
+export function translateRainDescription(
+  description: string,
+  lang: Language
+): string {
   const translations = getTranslations(lang);
   const translated = translations.rainDescriptions[description.toLowerCase()];
-  
+
   // Return translation if exists, otherwise capitalize original
-  return translated || description.charAt(0).toUpperCase() + description.slice(1);
+  return (
+    translated || description.charAt(0).toUpperCase() + description.slice(1)
+  );
 }
 
 /**
@@ -756,15 +765,15 @@ export function translateRainDescription(description: string, lang: Language): s
 export function translateCondition(condition: string, lang: Language): string {
   const translations = getTranslations(lang);
   const conditionMap: Record<string, string> = {
-    "Clear": translations.conditions.clear,
-    "Clouds": translations.conditions.clouds,
-    "Rain": translations.conditions.rain,
-    "Snow": translations.conditions.snow,
-    "Thunderstorm": translations.conditions.thunderstorm,
-    "Drizzle": translations.conditions.drizzle,
-    "Mist": translations.conditions.mist,
-    "Fog": translations.conditions.fog,
+    Clear: translations.conditions.clear,
+    Clouds: translations.conditions.clouds,
+    Rain: translations.conditions.rain,
+    Snow: translations.conditions.snow,
+    Thunderstorm: translations.conditions.thunderstorm,
+    Drizzle: translations.conditions.drizzle,
+    Mist: translations.conditions.mist,
+    Fog: translations.conditions.fog,
   };
-  
+
   return conditionMap[condition] || condition;
 }

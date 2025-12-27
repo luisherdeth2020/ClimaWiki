@@ -14,14 +14,22 @@ export default function MapPage() {
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
 
-  const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [selectedCoords, setSelectedCoords] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
   const [manualLat, setManualLat] = useState("");
   const [manualLon, setManualLon] = useState("");
   const [centeringMap, setCenteringMap] = useState(false);
 
   // Initialize Leaflet map
   useEffect(() => {
-    if (typeof window === "undefined" || !mapRef.current || mapInstanceRef.current) return;
+    if (
+      typeof window === "undefined" ||
+      !mapRef.current ||
+      mapInstanceRef.current
+    )
+      return;
 
     const initMap = async () => {
       // Dynamic import para evitar SSR issues
@@ -30,9 +38,12 @@ export default function MapPage() {
       // Fix Leaflet default icon issue with bundlers
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
-        iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-        iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+        iconRetinaUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+        iconUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+        shadowUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
       });
 
       // Create map centered on Europe
@@ -41,7 +52,8 @@ export default function MapPage() {
 
       // Add OpenStreetMap tiles
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 18,
       }).addTo(map);
 
@@ -75,15 +87,20 @@ export default function MapPage() {
     };
   }, []);
 
-
-
   // Handle manual coordinate input
   const handleManualSubmit = async (e: Event) => {
     e.preventDefault();
     const lat = parseFloat(manualLat);
     const lon = parseFloat(manualLon);
 
-    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+    if (
+      isNaN(lat) ||
+      isNaN(lon) ||
+      lat < -90 ||
+      lat > 90 ||
+      lon < -180 ||
+      lon > 180
+    ) {
       alert(t.map.invalidCoords);
       return;
     }
@@ -96,17 +113,19 @@ export default function MapPage() {
   const handleMyLocation = async () => {
     setCenteringMap(true);
     try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        if (!navigator.geolocation) {
-          reject(new Error("Geolocation not supported"));
-          return;
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error("Geolocation not supported"));
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
+          });
         }
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
-        });
-      });
+      );
 
       const { latitude, longitude } = position.coords;
 
@@ -119,7 +138,9 @@ export default function MapPage() {
           mapInstanceRef.current.removeLayer(markerRef.current);
         }
 
-        const marker = L.marker([latitude, longitude]).addTo(mapInstanceRef.current);
+        const marker = L.marker([latitude, longitude]).addTo(
+          mapInstanceRef.current
+        );
         markerRef.current = marker;
 
         // Update state
@@ -145,8 +166,18 @@ export default function MapPage() {
             class="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors"
             aria-label={t.common.back}
           >
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </a>
 
@@ -168,22 +199,42 @@ export default function MapPage() {
             {centeringMap ? (
               <div class="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
             ) : (
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
               </svg>
             )}
-            <span class="text-sm">{centeringMap ? t.map.centeringMap : t.map.myLocation}</span>
+            <span class="text-sm">
+              {centeringMap ? t.map.centeringMap : t.map.myLocation}
+            </span>
           </button>
         </div>
       </section>
 
       {/* Map Container */}
       <section class="px-4 mb-6">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+        />
         <div
           ref={mapRef}
-          class="w-full h-96 rounded-2xl overflow-hidden border border-white/10"
+          class="w-full h-[58dvh] rounded-2xl overflow-hidden border border-white/10"
           style={{ zIndex: 1 }}
         ></div>
       </section>
@@ -194,21 +245,29 @@ export default function MapPage() {
         <form onSubmit={handleManualSubmit} class="glass rounded-2xl p-4">
           <div class="grid grid-cols-2 gap-3 mb-4">
             <div>
-              <label class="text-xs text-gray-400 mb-1 block">{t.map.latitude}</label>
+              <label class="text-xs text-gray-400 mb-1 block">
+                {t.map.latitude}
+              </label>
               <input
                 type="text"
                 value={manualLat}
-                onInput={(e) => setManualLat((e.target as HTMLInputElement).value)}
+                onInput={(e) =>
+                  setManualLat((e.target as HTMLInputElement).value)
+                }
                 placeholder="39.578410"
                 class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-400"
               />
             </div>
             <div>
-              <label class="text-xs text-gray-400 mb-1 block">{t.map.longitude}</label>
+              <label class="text-xs text-gray-400 mb-1 block">
+                {t.map.longitude}
+              </label>
               <input
                 type="text"
                 value={manualLon}
-                onInput={(e) => setManualLon((e.target as HTMLInputElement).value)}
+                onInput={(e) =>
+                  setManualLon((e.target as HTMLInputElement).value)
+                }
                 placeholder="2.640337"
                 class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-400"
               />
@@ -223,14 +282,25 @@ export default function MapPage() {
         </form>
       </section>
 
-
-
       {/* Bottom Navigation */}
       <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-lg border-t border-white/10 px-4 py-3">
         <div class="flex items-center justify-around max-w-2xl mx-auto">
-          <a href="/welcome" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 20 20" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          <a
+            href="/welcome"
+            class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              viewBox="0 0 20 20"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              />
             </svg>
             <span class="text-xs">{t.nav.home}</span>
           </a>
@@ -242,17 +312,48 @@ export default function MapPage() {
             <span class="text-xs font-medium">{t.nav.map}</span>
           </a>
 
-          <a href="/saved" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          <a
+            href="/saved"
+            class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+              />
             </svg>
             <span class="text-xs">{t.nav.saved}</span>
           </a>
 
-          <a href="/settings" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <a
+            href="/settings"
+            class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
             <span class="text-xs">{t.nav.settings}</span>
           </a>

@@ -99,7 +99,7 @@ export default function HourlyForecast({
       {/* Scrollable hourly cards */}
       <div
         ref={scrollContainerRef}
-        class="flex gap-3 overflow-x-auto scroll-smooth-x hide-scrollbar px-4 pb-4"
+        class="flex gap-3 overflow-x-auto scroll-smooth-x hide-scrollbar px-4 pb-4 lg:max-w-fit lg:mx-auto ml-4"
         style={{ scrollSnapType: "x mandatory" }}
       >
         {hourlyData.map((hour, index) => {

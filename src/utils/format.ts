@@ -32,7 +32,7 @@ export function formatTempRange(min: number, max: number): string {
  */
 export function getWindDirection(degrees: number): string {
   const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-  const index = Math.round(((degrees % 360) / 45)) % 8;
+  const index = Math.round((degrees % 360) / 45) % 8;
   return directions[index];
 }
 
@@ -57,7 +57,10 @@ export function formatWind(speed: number, direction: number): string {
 /**
  * Format time for hourly forecast (e.g., "2 PM", "14:00")
  */
-export function formatHourlyTime(date: Date, use24Hour: boolean = false): string {
+export function formatHourlyTime(
+  date: Date,
+  use24Hour: boolean = false
+): string {
   if (use24Hour) {
     return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
@@ -83,8 +86,15 @@ export function getHourLabel(date: Date, isNow: boolean = false): string {
 
 /**
  * Format day name (e.g., "Today", "Tomorrow", "Monday")
+ * @param date - The date to format
+ * @param referenceDate - Reference date (defaults to today)
+ * @param translations - Optional translations object with `today` and `tomorrow` keys
  */
-export function formatDayName(date: Date, referenceDate: Date = new Date()): string {
+export function formatDayName(
+  date: Date,
+  referenceDate: Date = new Date(),
+  translations?: { today: string; tomorrow: string }
+): string {
   const today = new Date(referenceDate);
   today.setHours(0, 0, 0, 0);
 
@@ -94,16 +104,27 @@ export function formatDayName(date: Date, referenceDate: Date = new Date()): str
   const diffTime = compareDate.getTime() - today.getTime();
   const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Tomorrow";
+  if (diffDays === 0) return translations?.today || "Today";
+  if (diffDays === 1) return translations?.tomorrow || "Tomorrow";
 
-  return date.toLocaleDateString("en-US", { weekday: "long" });
+  // Use the locale from translations if available, otherwise default to en-US
+  const locale = translations
+    ? translations.today === "Hoy"
+      ? "es-ES"
+      : "en-US"
+    : "en-US";
+  const dayName = date.toLocaleDateString(locale, { weekday: "long" });
+  // Capitalize first letter
+  return dayName.charAt(0).toUpperCase() + dayName.slice(1);
 }
 
 /**
  * Format short day name (e.g., "Today", "Tue", "Wed")
  */
-export function formatShortDay(date: Date, referenceDate: Date = new Date()): string {
+export function formatShortDay(
+  date: Date,
+  referenceDate: Date = new Date()
+): string {
   const today = new Date(referenceDate);
   today.setHours(0, 0, 0, 0);
 
@@ -152,7 +173,9 @@ export function formatPrecipitation(probability: number): string {
 /**
  * Get precipitation risk level
  */
-export function getPrecipitationRisk(probability: number): "low" | "medium" | "high" {
+export function getPrecipitationRisk(
+  probability: number
+): "low" | "medium" | "high" {
   if (probability < 30) return "low";
   if (probability < 70) return "medium";
   return "high";
@@ -165,7 +188,9 @@ export function getPrecipitationRisk(probability: number): "low" | "medium" | "h
 /**
  * Get confidence indicator with UI metadata
  */
-export function getConfidenceIndicator(level: ForecastConfidence): ConfidenceIndicator {
+export function getConfidenceIndicator(
+  level: ForecastConfidence
+): ConfidenceIndicator {
   const indicators: Record<ForecastConfidence, ConfidenceIndicator> = {
     high: {
       level: "high",

@@ -1,6 +1,6 @@
 /**
  * OpenWeatherMap API Service
- * 
+ *
  * This service handles all interactions with the OpenWeatherMap API.
  * It provides type-safe methods to fetch weather data and includes
  * error handling and data transformation.
@@ -20,7 +20,7 @@ import type {
 // Prefix 'PUBLIC_' makes it available in both client and server code
 const API_KEY = import.meta.env.PUBLIC_OPENWEATHER_API_KEY;
 
-if (!API_KEY && typeof window !== 'undefined') {
+if (!API_KEY && typeof window !== "undefined") {
   // Only warn in browser (runtime), not during build time
   console.warn(
     "Missing OpenWeatherMap API key. Please set PUBLIC_OPENWEATHER_API_KEY in your environment variables"
@@ -103,7 +103,9 @@ export async function fetchCurrentWeather(
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error(`Weather API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Weather API error: ${response.status} ${response.statusText}`
+      );
     }
 
     const data: CurrentWeatherResponse = await response.json();
@@ -127,7 +129,9 @@ export async function fetchForecast(
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error(`Forecast API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Forecast API error: ${response.status} ${response.statusText}`
+      );
     }
 
     const data: ForecastResponse = await response.json();
@@ -157,7 +161,9 @@ export async function fetchOneCallWeather(
       if (response.status === 401) {
         throw new Error("ONE_CALL_NOT_AVAILABLE");
       }
-      throw new Error(`One Call API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `One Call API error: ${response.status} ${response.statusText}`
+      );
     }
 
     const data: OneCallResponse = await response.json();
@@ -218,10 +224,11 @@ export async function fetchCompleteWeather(
         const tempMax = Math.round(Math.max(...temps));
 
         // Use midday forecast for condition (around 12:00)
-        const middayItem = items.find((i) => {
-          const hour = new Date(i.dt * 1000).getHours();
-          return hour >= 12 && hour <= 15;
-        }) || items[0];
+        const middayItem =
+          items.find((i) => {
+            const hour = new Date(i.dt * 1000).getHours();
+            return hour >= 12 && hour <= 15;
+          }) || items[0];
 
         const avgPop = items.reduce((sum, i) => sum + i.pop, 0) / items.length;
 
@@ -239,13 +246,20 @@ export async function fetchCompleteWeather(
     // Extract rainfall data from FORECAST (next 3h) instead of historical
     // This gives more useful data: "how much rain is expected" vs "how much it rained"
     const nextForecast = forecastData.list[0];
-    const rainfall = nextForecast?.rain?.['3h'] || currentData.rain?.['3h'] || currentData.rain?.['1h'] || 0;
-    
+    const rainfall =
+      nextForecast?.rain?.["3h"] ||
+      currentData.rain?.["3h"] ||
+      currentData.rain?.["1h"] ||
+      0;
+
     // Determine rain type from current weather OR next forecast if current is clear
-    const hasCurrentRain = currentData.weather[0].main === 'Rain' || currentData.weather[0].main === 'Drizzle' || currentData.weather[0].main === 'Thunderstorm';
-    const rainType = hasCurrentRain 
-      ? currentData.weather[0].description 
-      : (nextForecast?.weather[0]?.description || "none");
+    const hasCurrentRain =
+      currentData.weather[0].main === "Rain" ||
+      currentData.weather[0].main === "Drizzle" ||
+      currentData.weather[0].main === "Thunderstorm";
+    const rainType = hasCurrentRain
+      ? currentData.weather[0].description
+      : nextForecast?.weather[0]?.description || "none";
 
     // Build processed data
     const processedData: ProcessedWeatherData = {
@@ -265,16 +279,18 @@ export async function fetchCompleteWeather(
         wind: {
           speed: msToKmh(currentData.wind.speed),
           direction: currentData.wind.deg,
-          gust: currentData.wind.gust ? msToKmh(currentData.wind.gust) : undefined,
+          gust: currentData.wind.gust
+            ? msToKmh(currentData.wind.gust)
+            : undefined,
         },
         humidity: currentData.main.humidity,
         pressure: Math.round(currentData.main.pressure),
-        precipitation: forecastData.list[0]?.pop 
-          ? Math.round(forecastData.list[0].pop * 100) 
+        precipitation: forecastData.list[0]?.pop
+          ? Math.round(forecastData.list[0].pop * 100)
           : 0,
         rainfall: Math.round(rainfall * 10) / 10, // Round to 1 decimal place
         rainType: rainType,
-        snowfall: currentData.snow?.['3h'] || currentData.snow?.['1h'] || 0,
+        snowfall: currentData.snow?.["3h"] || currentData.snow?.["1h"] || 0,
         updatedAt: new Date(),
       },
       hourly: hourlyForecasts,
@@ -330,13 +346,17 @@ export async function geocodeCity(query: string): Promise<GeocodingResult[]> {
       lat: parseFloat(item.lat),
       lon: parseFloat(item.lon),
       country: item.address?.country_code?.toUpperCase() || "Unknown",
-      state: item.address?.state || item.address?.city || item.address?.town || "",
+      state:
+        item.address?.state || item.address?.city || item.address?.town || "",
     }));
 
     return results;
   } catch (error) {
-    console.error("Nominatim geocoding failed, trying OpenWeatherMap fallback:", error);
-    
+    console.error(
+      "Nominatim geocoding failed, trying OpenWeatherMap fallback:",
+      error
+    );
+
     // Fallback to OpenWeatherMap (only cities, not streets)
     try {
       const owmUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
@@ -376,12 +396,12 @@ export async function reverseGeocode(
     }
 
     const data: any = await response.json();
-    
+
     // Extract city/town name
-    const cityName = 
-      data.address?.city || 
-      data.address?.town || 
-      data.address?.village || 
+    const cityName =
+      data.address?.city ||
+      data.address?.town ||
+      data.address?.village ||
       data.address?.municipality ||
       data.name ||
       "My Location";

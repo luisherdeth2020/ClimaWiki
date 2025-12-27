@@ -12,7 +12,11 @@ import LocationSearch from "./LocationSearch";
 import AutoLocation from "./AutoLocation";
 import AddToFavorites from "./AddToFavorites";
 import type { ProcessedWeatherData, Location } from "../types/weather";
-import { useTranslation, translateRainDescription, translateCondition } from "../i18n/translations";
+import {
+  useTranslation,
+  translateRainDescription,
+  translateCondition,
+} from "../i18n/translations";
 import { currentLanguage } from "../stores/language.store";
 
 export default function WeatherPage() {
@@ -142,7 +146,9 @@ export default function WeatherPage() {
           <div class="glass rounded-2xl p-4 text-center">
             <div class="text-3xl mb-1">🌡️</div>
             <p class="text-xs text-gray-400 mb-1">{t.weather.feelsLike}</p>
-            <p class="text-2xl font-semibold">{formatTemp(current.feelsLike)}</p>
+            <p class="text-2xl font-semibold">
+              {formatTemp(current.feelsLike)}
+            </p>
           </div>
 
           <div class="glass rounded-2xl p-4 text-center">
@@ -181,18 +187,27 @@ export default function WeatherPage() {
             {current.rainfall > 0 ? (
               <>
                 <p class="text-xs text-gray-400 mb-1">
-                  {translateRainDescription(current.rainType, currentLanguage.value)}
+                  {translateRainDescription(
+                    current.rainType,
+                    currentLanguage.value
+                  )}
                 </p>
-                <p class="text-2xl font-semibold">{current.rainfall.toFixed(1)}</p>
+                <p class="text-2xl font-semibold">
+                  {current.rainfall.toFixed(1)}
+                </p>
                 <p class="text-xs text-gray-400">mm (L/m²)</p>
-                <p class="text-xs text-gray-500 mt-1">{current.precipitation}% {t.weather.probability}</p>
+                <p class="text-xs text-gray-500 mt-1">
+                  {current.precipitation}% {t.weather.probability}
+                </p>
               </>
             ) : (
               <>
                 <p class="text-xs text-gray-400 mb-1">{t.weather.rain}</p>
                 <p class="text-2xl font-semibold">0</p>
                 <p class="text-xs text-gray-400">mm (L/m²)</p>
-                <p class="text-xs text-gray-500 mt-1">{current.precipitation}% {t.weather.probability}</p>
+                <p class="text-xs text-gray-500 mt-1">
+                  {current.precipitation}% {t.weather.probability}
+                </p>
               </>
             )}
           </div>
