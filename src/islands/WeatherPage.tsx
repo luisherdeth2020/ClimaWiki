@@ -19,6 +19,7 @@ import {
   translateCondition,
 } from "../i18n/translations";
 import { currentLanguage } from "../stores/language.store";
+import { temperatureUnit } from "../stores/settings.store";
 
 export default function WeatherPage() {
   const t = useTranslation();
@@ -27,6 +28,38 @@ export default function WeatherPage() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [, forceUpdate] = useState(0);
+
+  // Force re-render when page is restored from bfcache (back/forward cache)
+  // This ensures temperature unit changes are reflected when user navigates back
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        // Page was restored from bfcache, force re-render
+        forceUpdate((n) => n + 1);
+      }
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
+
+  // Subscribe to temperatureUnit to force re-render on changes
+  useEffect(() => {
+    const checkUnit = () => {
+      // This effect runs when temperatureUnit changes
+      // Force a re-render to update all TempDisplay components
+      forceUpdate((n) => n + 1);
+    };
+    
+    // Initial check
+    checkUnit();
+    
+    // Listen to storage events (when another tab/page changes settings)
+    window.addEventListener("storage", checkUnit);
+    
+    return () => window.removeEventListener("storage", checkUnit);
+  }, [temperatureUnit.value]);
 
   useEffect(() => {
     // Read URL params
