@@ -14,7 +14,6 @@ import {
 import type { ProcessedWeatherData, Location } from "../types/weather";
 import { useTranslation, translateCondition } from "../i18n/translations";
 import { currentLanguage } from "../stores/language.store";
-import { temperatureUnit } from "../stores/settings.store";
 import TempDisplay from "../components/TempDisplay";
 
 export default function ForecastPage() {
@@ -24,23 +23,6 @@ export default function ForecastPage() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [, forceUpdate] = useState(0);
-
-  // Force re-render when page is restored from bfcache
-  useEffect(() => {
-    const handlePageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) {
-        forceUpdate((n) => n + 1);
-      }
-    };
-    window.addEventListener("pageshow", handlePageShow);
-    return () => window.removeEventListener("pageshow", handlePageShow);
-  }, []);
-
-  // Force re-render when temperatureUnit changes
-  useEffect(() => {
-    forceUpdate((n) => n + 1);
-  }, [temperatureUnit.value]);
 
   useEffect(() => {
     // Read URL params
