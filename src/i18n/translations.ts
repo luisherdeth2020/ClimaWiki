@@ -636,7 +636,7 @@ const es: Translations = {
   theme: {
     dark: "Oscuro",
     light: "Claro",
-    auto: "Automático",
+    auto: "Auto",
   },
 
   languages: {

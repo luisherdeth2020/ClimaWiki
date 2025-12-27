@@ -13,7 +13,8 @@ import {
   getConfidenceIndicator,
 } from "../utils/format";
 import type { ProcessedWeatherData, Location } from "../types/weather";
-import { useTranslation } from "../i18n/translations";
+import { useTranslation, translateCondition } from "../i18n/translations";
+import { currentLanguage } from "../stores/language.store";
 
 export default function ForecastPage() {
   const t = useTranslation();
@@ -142,7 +143,9 @@ export default function ForecastPage() {
 
           <div class="flex items-baseline gap-2 mb-2">
             <span class="text-6xl font-light">{formatTemp(current.temp)}</span>
-            <span class="text-xl text-gray-400">{current.condition}</span>
+            <span class="text-xl text-gray-400">
+              {translateCondition(current.condition, currentLanguage.value)}
+            </span>
           </div>
 
           <div class="flex items-center gap-4 text-sm text-gray-400">
@@ -177,7 +180,9 @@ export default function ForecastPage() {
                     tomorrow: t.forecast.tomorrow,
                   })}
                 </p>
-                <p class="text-sm text-gray-400">{day.condition}</p>
+                <p class="text-sm text-gray-400">
+                  {translateCondition(day.condition, currentLanguage.value)}
+                </p>
               </div>
 
               {/* Icon */}
@@ -267,7 +272,9 @@ export default function ForecastPage() {
                       tomorrow: t.forecast.tomorrow,
                     })}
                   </p>
-                  <p class="text-sm text-gray-400">{day.condition}</p>
+                  <p class="text-sm text-gray-400">
+                    {translateCondition(day.condition, currentLanguage.value)}
+                  </p>
                 </div>
 
                 {/* Icon */}

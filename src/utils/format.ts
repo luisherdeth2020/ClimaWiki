@@ -4,16 +4,32 @@
  */
 
 import type { ForecastConfidence, ConfidenceIndicator } from "../types/weather";
+import { temperatureUnit } from "../stores/settings.store";
 
 // ============================================
 // TEMPERATURE FORMATTING
 // ============================================
 
 /**
- * Format temperature with degree symbol
+ * Convert Celsius to Fahrenheit
+ */
+function celsiusToFahrenheit(celsius: number): number {
+  return (celsius * 9) / 5 + 32;
+}
+
+/**
+ * Format temperature with degree symbol and unit (°C or °F)
+ * Automatically converts based on user settings
  */
 export function formatTemp(temp: number, decimals: number = 0): string {
-  return `${temp.toFixed(decimals)}°`;
+  const unit = temperatureUnit.value;
+  
+  if (unit === "fahrenheit") {
+    const fahrenheit = celsiusToFahrenheit(temp);
+    return `${fahrenheit.toFixed(decimals)}°F`;
+  }
+  
+  return `${temp.toFixed(decimals)}°C`;
 }
 
 /**

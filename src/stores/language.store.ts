@@ -1,6 +1,6 @@
 /**
  * Language Store - Manages app language with Preact Signals
- * 
+ *
  * Features:
  * - Auto-detects browser language on first load
  * - Persists selection in localStorage
@@ -24,7 +24,7 @@ function detectBrowserLanguage(): Language {
   if (typeof window === "undefined") return DEFAULT_LANGUAGE;
 
   const browserLang = navigator.language.toLowerCase();
-  
+
   // Check for Spanish variants (es, es-ES, es-MX, es-AR, etc.)
   if (browserLang.startsWith("es")) {
     return "es";
@@ -48,10 +48,10 @@ function getInitialLanguage(): Language {
 
   // 2. Fallback to browser language detection
   const detected = detectBrowserLanguage();
-  
+
   // Save detected language to localStorage
   localStorage.setItem(STORAGE_KEY, detected);
-  
+
   return detected;
 }
 
@@ -63,7 +63,7 @@ export const currentLanguage = signal<Language>(getInitialLanguage());
  */
 export function setLanguage(lang: Language) {
   currentLanguage.value = lang;
-  
+
   // Persist to localStorage
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEY, lang);
@@ -78,6 +78,6 @@ export function getLanguage(): Language {
 }
 
 // Log language detection (for debugging)
-if (typeof window !== "undefined") {
-  console.log(`🌍 Language detected: ${currentLanguage.value}`);
-}
+// if (typeof window !== "undefined") {
+//   console.log(`🌍 Language detected: ${currentLanguage.value}`);
+// }
