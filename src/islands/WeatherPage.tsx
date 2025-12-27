@@ -6,11 +6,12 @@
 import { h } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import { fetchCompleteWeather } from "../services/weather.service";
-import { formatTemp, formatLastUpdated } from "../utils/format";
+import { formatLastUpdated } from "../utils/format";
 import HourlyForecast from "./HourlyForecast";
 import LocationSearch from "./LocationSearch";
 import AutoLocation from "./AutoLocation";
 import AddToFavorites from "./AddToFavorites";
+import TempDisplay from "../components/TempDisplay";
 import type { ProcessedWeatherData, Location } from "../types/weather";
 import {
   useTranslation,
@@ -130,13 +131,15 @@ export default function WeatherPage() {
       {/* Weather Display */}
       <section class="px-4 py-8 text-center">
         <div class="mb-6 text-8xl">{getWeatherEmoji(current.icon)}</div>
-        <div class="text-7xl font-light mb-4">{formatTemp(current.temp)}</div>
+        <div class="text-7xl font-light mb-4">
+          <TempDisplay temp={current.temp} />
+        </div>
         <p class="text-2xl text-gray-300 mb-2">
           {translateCondition(current.condition, currentLanguage.value)}
         </p>
         <p class="text-lg text-gray-400">
-          H: {formatTemp(current.tempMax)} &nbsp; L:{" "}
-          {formatTemp(current.tempMin)}
+          H: <TempDisplay temp={current.tempMax} /> &nbsp; L:{" "}
+          <TempDisplay temp={current.tempMin} />
         </p>
       </section>
 
@@ -147,7 +150,7 @@ export default function WeatherPage() {
             <div class="text-3xl mb-1">🌡️</div>
             <p class="text-xs text-gray-400 mb-1">{t.weather.feelsLike}</p>
             <p class="text-2xl font-semibold">
-              {formatTemp(current.feelsLike)}
+              <TempDisplay temp={current.feelsLike} />
             </p>
           </div>
 

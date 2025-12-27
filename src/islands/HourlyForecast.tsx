@@ -13,11 +13,11 @@ import { useRef, useState } from "preact/hooks";
 import type { ProcessedWeatherData } from "../types/weather";
 import {
   getHourLabel,
-  formatTemp,
   formatPrecipitation,
   formatWindSpeed,
 } from "../utils/format";
 import { useTranslation } from "../i18n/translations";
+import TempDisplay from "../components/TempDisplay";
 
 interface Props {
   hourlyData: ProcessedWeatherData["hourly"];
@@ -136,7 +136,7 @@ export default function HourlyForecast({
 
               {/* Temperature */}
               <div class="text-xl font-semibold mb-3">
-                {formatTemp(hour.temp)}
+                <TempDisplay temp={hour.temp} />
               </div>
 
               {/* Precipitation % with icon */}

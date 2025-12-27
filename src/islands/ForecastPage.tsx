@@ -7,7 +7,6 @@ import { h } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import { fetchCompleteWeather } from "../services/weather.service";
 import {
-  formatTemp,
   formatDayName,
   formatPrecipitation,
   getConfidenceIndicator,
@@ -15,6 +14,7 @@ import {
 import type { ProcessedWeatherData, Location } from "../types/weather";
 import { useTranslation, translateCondition } from "../i18n/translations";
 import { currentLanguage } from "../stores/language.store";
+import TempDisplay from "../components/TempDisplay";
 
 export default function ForecastPage() {
   const t = useTranslation();
@@ -142,7 +142,7 @@ export default function ForecastPage() {
           </div>
 
           <div class="flex items-baseline gap-2 mb-2">
-            <span class="text-6xl font-light">{formatTemp(current.temp)}</span>
+            <span class="text-6xl font-light">{<TempDisplay temp={current.temp} />}</span>
             <span class="text-xl text-gray-400">
               {translateCondition(current.condition, currentLanguage.value)}
             </span>
@@ -153,8 +153,8 @@ export default function ForecastPage() {
               {t.forecast.low} / {t.forecast.high}
             </span>
             <span class="font-medium text-white">
-              {formatTemp(todayForecast.tempMin)} /{" "}
-              {formatTemp(todayForecast.tempMax)}
+              {<TempDisplay temp={todayForecast.tempMin} />} /{" "}
+              {<TempDisplay temp={todayForecast.tempMax} />}
             </span>
           </div>
         </div>
@@ -191,9 +191,9 @@ export default function ForecastPage() {
               {/* Temps & Precip */}
               <div class="text-right">
                 <div class="flex items-center gap-3 mb-1">
-                  <span class="text-gray-400">{formatTemp(day.tempMin)}</span>
+                  <span class="text-gray-400">{<TempDisplay temp={day.tempMin} />}</span>
                   <span class="text-xl font-semibold">
-                    {formatTemp(day.tempMax)}
+                    {<TempDisplay temp={day.tempMax} />}
                   </span>
                 </div>
                 {day.precipitation > 20 && (
@@ -289,16 +289,16 @@ export default function ForecastPage() {
                         {t.forecast.tempRange}
                       </p>
                       <p class="text-lg font-semibold">
-                        {formatTemp(day.tempMin)} — {formatTemp(day.tempMax)}
+                        {<TempDisplay temp={day.tempMin} />} — {<TempDisplay temp={day.tempMax} />}
                       </p>
                     </div>
                   ) : (
                     <div class="flex items-center gap-3 mb-1">
                       <span class="text-gray-400">
-                        {formatTemp(day.tempMin)}
+                        {<TempDisplay temp={day.tempMin} />}
                       </span>
                       <span class="text-xl font-semibold">
-                        {formatTemp(day.tempMax)}
+                        {<TempDisplay temp={day.tempMax} />}
                       </span>
                     </div>
                   )}
