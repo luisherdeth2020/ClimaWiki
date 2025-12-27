@@ -3,3 +3,7 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(self)
+
+# Don't cache JS bundles aggressively - allow signal reactivity to work
+/_astro/*.js
+  Cache-Control: public, max-age=3600, must-revalidate
