@@ -34,25 +34,9 @@ export function formatTemp(temp: number, decimals: number = 0): string {
   return `${temp.toFixed(decimals)}°C`;
 }
 
-/**
- * Format temperature range
- */
-export function formatTempRange(min: number, max: number): string {
-  return `${Math.round(min)}° - ${Math.round(max)}°`;
-}
-
 // ============================================
 // WIND FORMATTING
 // ============================================
-
-/**
- * Convert wind direction degrees to cardinal direction
- */
-export function getWindDirection(degrees: number): string {
-  const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-  const index = Math.round((degrees % 360) / 45) % 8;
-  return directions[index];
-}
 
 /**
  * Format wind speed with units
@@ -61,37 +45,17 @@ export function formatWindSpeed(kmh: number): string {
   return `${Math.round(kmh)} km/h`;
 }
 
-/**
- * Format wind information (speed + direction)
- */
-export function formatWind(speed: number, direction: number): string {
-  return `${getWindDirection(direction)} ${formatWindSpeed(speed)}`;
-}
-
 // ============================================
 // TIME FORMATTING
 // ============================================
 
 /**
- * Format time for hourly forecast (e.g., "2 PM", "14:00")
+ * Format time for hourly forecast in 24-hour format (e.g., "14:00", "09:00")
  */
-export function formatHourlyTime(
-  date: Date,
-  use24Hour: boolean = false
-): string {
-  if (use24Hour) {
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  }
-
-  const hour = date.getHours();
-  if (hour === 0) return "12 AM";
-  if (hour === 12) return "12 PM";
-  if (hour < 12) return `${hour} AM`;
-  return `${hour - 12} PM`;
+export function formatHourlyTime(date: Date): string {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
 }
 
 /**
@@ -137,28 +101,6 @@ export function formatDayName(
 }
 
 /**
- * Format short day name (e.g., "Today", "Tue", "Wed")
- */
-export function formatShortDay(
-  date: Date,
-  referenceDate: Date = new Date()
-): string {
-  const today = new Date(referenceDate);
-  today.setHours(0, 0, 0, 0);
-
-  const compareDate = new Date(date);
-  compareDate.setHours(0, 0, 0, 0);
-
-  const diffTime = compareDate.getTime() - today.getTime();
-  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Tom";
-
-  return date.toLocaleDateString("en-US", { weekday: "short" });
-}
-
-/**
  * Format last updated time (e.g., "Updated just now", "Updated 5 min ago")
  */
 export function formatLastUpdated(date: Date): string {
@@ -186,17 +128,6 @@ export function formatLastUpdated(date: Date): string {
  */
 export function formatPrecipitation(probability: number): string {
   return `${Math.round(probability)}%`;
-}
-
-/**
- * Get precipitation risk level
- */
-export function getPrecipitationRisk(
-  probability: number
-): "low" | "medium" | "high" {
-  if (probability < 30) return "low";
-  if (probability < 70) return "medium";
-  return "high";
 }
 
 // ============================================
@@ -239,36 +170,4 @@ export function getConfidenceIndicator(
   return indicators[level];
 }
 
-/**
- * Get simplified confidence label for UI
- */
-export function getConfidenceLabel(level: ForecastConfidence): string {
-  if (level === "high") return "";
-  if (level === "medium") return "Medium Confidence";
-  return "Previsión orientativa";
-}
 
-// ============================================
-// HUMIDITY FORMATTING
-// ============================================
-
-/**
- * Format humidity percentage
- */
-export function formatHumidity(humidity: number): string {
-  return `${Math.round(humidity)}%`;
-}
-
-// ============================================
-// CONDITION TEXT HELPERS
-// ============================================
-
-/**
- * Capitalize first letter of each word
- */
-export function capitalizeWords(text: string): string {
-  return text
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-}

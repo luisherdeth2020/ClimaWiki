@@ -8,14 +8,10 @@
  * - Highlighting current hour
  */
 
-import { h } from "preact";
-import { useRef, useState } from "preact/hooks";
+import { useRef } from "preact/hooks";
 import type { ProcessedWeatherData } from "../types/weather";
-import {
-  getHourLabel,
-  formatPrecipitation,
-  formatWindSpeed,
-} from "../utils/format";
+import { getHourLabel, formatPrecipitation } from "../utils/format";
+import { getWeatherEmoji } from "../utils/weather-icons";
 import { useTranslation } from "../i18n/translations";
 import TempDisplay from "../components/TempDisplay";
 
@@ -34,31 +30,6 @@ export default function HourlyForecast({
 }: Props) {
   const t = useTranslation();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Map icon codes to emoji (matching WeatherIcon component)
-  const iconMap: Record<string, string> = {
-    "01d": "☀️",
-    "01n": "🌙",
-    "02d": "🌤️",
-    "02n": "☁️",
-    "03d": "☁️",
-    "03n": "☁️",
-    "04d": "☁️",
-    "04n": "☁️",
-    "09d": "🌧️",
-    "09n": "🌧️",
-    "10d": "🌦️",
-    "10n": "🌧️",
-    "11d": "⛈️",
-    "11n": "⛈️",
-    "13d": "❄️",
-    "13n": "❄️",
-    "50d": "🌫️",
-    "50n": "🌫️",
-  };
-
-  const getIcon = (code: string) => iconMap[code] || "🌡️";
 
   // Build forecast URL with location params
   const forecastUrl =
@@ -131,7 +102,7 @@ export default function HourlyForecast({
 
               {/* Weather Icon */}
               <div class="text-3xl mb-2" role="img" aria-label="Weather icon">
-                {getIcon(hour.icon)}
+                {getWeatherEmoji(hour.icon)}
               </div>
 
               {/* Temperature */}

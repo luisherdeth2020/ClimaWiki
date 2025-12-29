@@ -9,7 +9,6 @@
 import type {
   CurrentWeatherResponse,
   ForecastResponse,
-  OneCallResponse,
   ProcessedWeatherData,
   Location,
   ForecastConfidence,
@@ -59,31 +58,29 @@ function getForecastConfidence(daysAhead: number): ForecastConfidence {
 }
 
 /**
- * Map OpenWeatherMap icon codes to weather conditions
+ * Transform weather data into hourly forecast format
+ * Centralizes the mapping logic to avoid duplication
+ * 
+ * @param time - The timestamp for this forecast slot
+ * @param temp - Temperature in Celsius
+ * @param icon - OpenWeatherMap icon code
+ * @param precipitation - Precipitation probability (0-1 or 0-100)
+ * @param windSpeedMs - Wind speed in m/s
  */
-function getWeatherCondition(iconCode: string): string {
-  const conditionMap: Record<string, string> = {
-    "01d": "Clear Sky",
-    "01n": "Clear Night",
-    "02d": "Partly Cloudy",
-    "02n": "Partly Cloudy",
-    "03d": "Cloudy",
-    "03n": "Cloudy",
-    "04d": "Overcast",
-    "04n": "Overcast",
-    "09d": "Light Rain",
-    "09n": "Light Rain",
-    "10d": "Rain",
-    "10n": "Rain",
-    "11d": "Thunderstorm",
-    "11n": "Thunderstorm",
-    "13d": "Snow",
-    "13n": "Snow",
-    "50d": "Mist",
-    "50n": "Mist",
+function mapToHourlyFormat(
+  time: Date,
+  temp: number,
+  icon: string,
+  precipitation: number,
+  windSpeedMs: number
+) {
+  return {
+    time,
+    temp: Math.round(temp),
+    icon,
+    precipitation: Math.round(precipitation >= 1 ? precipitation : precipitation * 100),
+    windSpeed: msToKmh(windSpeedMs),
   };
-
-  return conditionMap[iconCode] || "Unknown";
 }
 
 // ============================================
@@ -142,38 +139,6 @@ export async function fetchForecast(
   }
 }
 
-/**
- * Fetch comprehensive weather data using One Call API 3.0
- * NOTE: This requires a paid plan on OpenWeatherMap
- * For the free tier, we'll use the combined approach with current + forecast
- */
-export async function fetchOneCallWeather(
-  lat: number,
-  lon: number
-): Promise<OneCallResponse> {
-  const url = `${ONE_CALL_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&exclude=minutely`;
-
-  try {
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      // One Call 3.0 requires subscription, fallback to combined method
-      if (response.status === 401) {
-        throw new Error("ONE_CALL_NOT_AVAILABLE");
-      }
-      throw new Error(
-        `One Call API error: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data: OneCallResponse = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch One Call weather:", error);
-    throw error;
-  }
-}
-
 // ============================================
 // COMBINED FETCH (FREE TIER COMPATIBLE)
 // ============================================
@@ -194,14 +159,36 @@ export async function fetchCompleteWeather(
       fetchForecast(lat, lon),
     ]);
 
-    // Extract hourly forecast for next 24 hours (8 intervals of 3 hours)
-    const hourlyForecasts = forecastData.list.slice(0, 8).map((item) => ({
-      time: unixToDate(item.dt),
-      temp: Math.round(item.main.temp),
-      icon: item.weather[0].icon,
-      precipitation: Math.round(item.pop * 100),
-      windSpeed: msToKmh(item.wind.speed),
-    }));
+    /**
+     * Build hourly forecast array for next 24 hours
+     * 
+     * OpenWeatherMap free tier provides forecast in 3-hour intervals.
+     * To show current conditions as "Now", we combine:
+     * - Current weather (actual conditions right now)
+     * - Next 7 forecast slots (3h intervals = 21h coverage)
+     * 
+     * Result: 8 time slots covering ~24 hours starting from now
+     */
+    const hourlyForecasts = [
+      // Current conditions as first slot ("Now")
+      mapToHourlyFormat(
+        new Date(),
+        currentData.main.temp,
+        currentData.weather[0].icon,
+        forecastData.list[0]?.pop || 0,
+        currentData.wind.speed
+      ),
+      // Future forecast slots (3h intervals)
+      ...forecastData.list.slice(0, 7).map((item) =>
+        mapToHourlyFormat(
+          unixToDate(item.dt),
+          item.main.temp,
+          item.weather[0].icon,
+          item.pop,
+          item.wind.speed
+        )
+      ),
+    ];
 
     // Group forecast by day for daily forecast
     const dailyMap = new Map<string, typeof forecastData.list>();
