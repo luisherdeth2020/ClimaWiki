@@ -3,7 +3,6 @@
  * These functions handle the presentation layer concerns
  */
 
-import type { ForecastConfidence, ConfidenceIndicator } from "../types/weather";
 import { temperatureUnit } from "../stores/settings.store";
 
 // ============================================
@@ -129,45 +128,4 @@ export function formatLastUpdated(date: Date): string {
 export function formatPrecipitation(probability: number): string {
   return `${Math.round(probability)}%`;
 }
-
-// ============================================
-// CONFIDENCE INDICATORS
-// ============================================
-
-/**
- * Get confidence indicator with UI metadata
- */
-export function getConfidenceIndicator(
-  level: ForecastConfidence
-): ConfidenceIndicator {
-  const indicators: Record<ForecastConfidence, ConfidenceIndicator> = {
-    high: {
-      level: "high",
-      label: "High Confidence",
-      color: "text-green-500",
-      description: "Forecast is highly reliable",
-    },
-    medium: {
-      level: "medium",
-      label: "Medium Confidence",
-      color: "text-yellow-500",
-      description: "Forecast accuracy may vary",
-    },
-    low: {
-      level: "low",
-      label: "Low Confidence",
-      color: "text-orange-500",
-      description: "Previsión orientativa",
-    },
-    volatile: {
-      level: "volatile",
-      label: "Volatile",
-      color: "text-red-500",
-      description: "Range widens due to pressure instability",
-    },
-  };
-
-  return indicators[level];
-}
-
 

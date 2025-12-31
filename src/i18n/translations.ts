@@ -60,9 +60,6 @@ export interface Translations {
     tempRange: string;
     aboutAccuracy: string;
     aboutAccuracyText: string;
-    confidenceHigh: string;
-    confidenceMedium: string;
-    confidenceLow: string;
     orientativeForecast: string;
   };
 
@@ -273,15 +270,12 @@ const en: Translations = {
     seeFullForecast: "See Full Forecast",
     next24Hours: "Next 24 Hours",
     updatedNow: "Updated now",
-    low: "L",
-    high: "H",
+    low: "Min",
+    high: "Max",
     tempRange: "Temp Range",
     aboutAccuracy: "About Forecast Accuracy",
     aboutAccuracyText:
       "Weather forecasts become less precise over time. Confidence decreases significantly beyond 3 days. Extended forecasts show temperature ranges to reflect this uncertainty.",
-    confidenceHigh: "High",
-    confidenceMedium: "Medium",
-    confidenceLow: "Low",
     orientativeForecast: "Indicative forecast",
   },
 
@@ -509,15 +503,12 @@ const es: Translations = {
     seeFullForecast: "Ver Pronóstico Completo",
     next24Hours: "Próximas 24 Horas",
     updatedNow: "Actualizado ahora",
-    low: "M",
-    high: "M",
+    low: "Mín",
+    high: "Máx",
     tempRange: "Rango Temp",
     aboutAccuracy: "Sobre la Precisión del Pronóstico",
     aboutAccuracyText:
       "Los pronósticos del tiempo se vuelven menos precisos con el tiempo. La confianza disminuye significativamente después de 3 días. Los pronósticos extendidos muestran rangos de temperatura para reflejar esta incertidumbre.",
-    confidenceHigh: "Alta",
-    confidenceMedium: "Media",
-    confidenceLow: "Baja",
     orientativeForecast: "Pronóstico orientativo",
   },
 

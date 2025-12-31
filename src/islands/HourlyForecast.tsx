@@ -81,7 +81,7 @@ export default function HourlyForecast({
             <div
               key={index}
               class={`
-                flex-none w-24 rounded-2xl p-4 text-center
+                flex-none w-24 rounded-2xl p-3 text-center
                 transition-all duration-300
                 ${
                   isNow
@@ -93,7 +93,7 @@ export default function HourlyForecast({
             >
               {/* Time */}
               <div
-                class={`text-xs font-medium mb-3 ${
+                class={`text-sm font-medium mb-3 ${
                   isNow ? "text-blue-200" : "text-gray-400"
                 }`}
               >
@@ -114,16 +114,20 @@ export default function HourlyForecast({
               <div class="flex items-center justify-center gap-1 text-xs text-blue-300 mb-2">
                 <svg
                   class="w-3.5 h-3.5"
-                  viewBox="0 0 12 16"
-                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
                 >
-                  <path d="M6 0C6 0 2 4.5 2 8c0 2.2 1.8 4 4 4s4-1.8 4-4c0-3.5-4-8-4-8zm0 10.5c-1.4 0-2.5-1.1-2.5-2.5 0-1.5 1.3-3.5 2.5-5.3 1.2 1.8 2.5 3.8 2.5 5.3 0 1.4-1.1 2.5-2.5 2.5z" />
+                  <path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7" />
                 </svg>
                 <span>{formatPrecipitation(hour.precipitation)}</span>
               </div>
 
               {/* Wind speed with icon */}
-              <div class="flex items-center justify-center gap-1 text-xs text-cyan-300">
+              <div class="flex items-center justify-center gap-1 text-xs text-cyan-300 mb-2">
                 <svg
                   class="w-3.5 h-3.5"
                   viewBox="0 0 24 24"
@@ -138,6 +142,22 @@ export default function HourlyForecast({
                   />
                 </svg>
                 <span>{Math.round(hour.windSpeed)} km/h</span>
+              </div>
+
+              {/* Humidity with icon */}
+              <div class="flex items-center justify-center gap-1 text-xs text-purple-300">
+                <svg
+                  class="w-3.5 h-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                </svg>
+                <span>{hour.humidity}%</span>
               </div>
             </div>
           );

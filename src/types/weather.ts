@@ -160,6 +160,7 @@ export interface ProcessedWeatherData {
     icon: string;
     precipitation: number;
     windSpeed: number;
+    humidity: number;
   }>;
   daily: Array<{
     date: Date;
@@ -168,6 +169,7 @@ export interface ProcessedWeatherData {
     condition: string;
     icon: string;
     precipitation: number;
+    humidity: number;
     confidence: ForecastConfidence; // Based on forecast day
   }>;
 }
@@ -177,10 +179,3 @@ export interface ProcessedWeatherData {
 // ============================================
 
 export type ForecastConfidence = "high" | "medium" | "low" | "volatile";
-
-export interface ConfidenceIndicator {
-  level: ForecastConfidence;
-  label: string;
-  color: string; // Tailwind color class
-  description: string;
-}

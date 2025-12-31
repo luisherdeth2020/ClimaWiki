@@ -137,10 +137,27 @@ export default function WeatherPage() {
         <p class="text-2xl text-gray-300 mb-2">
           {translateCondition(current.condition, currentLanguage.value)}
         </p>
-        <p class="text-lg text-gray-400">
-          H: <TempDisplay temp={current.tempMax} /> &nbsp; L:{" "}
-          <TempDisplay temp={current.tempMin} />
+        <p class="text-lg text-gray-400 mb-3">
+          {t.forecast.low}: <TempDisplay temp={current.tempMin} /> &nbsp;{" "}
+          {t.forecast.high}: <TempDisplay temp={current.tempMax} />
         </p>
+        {/* Humidity Display */}
+        <div class="flex items-center justify-center gap-2 text-gray-400">
+          <svg
+            class="w-5 h-5 text-cyan-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 3c0 0-6 6-6 10a6 6 0 0012 0c0-4-6-10-6-10z"
+            />
+          </svg>
+          <span class="text-base font-medium">{current.humidity}%</span>
+        </div>
       </section>
 
       {/* Metrics */}
@@ -169,8 +186,10 @@ export default function WeatherPage() {
               />
             </svg>
             <p class="text-xs text-gray-400 mb-1">{t.weather.wind}</p>
-            <p class="text-2xl font-semibold">{current.wind.speed}</p>
-            <p class="text-xs text-gray-400">{t.units.kmh}</p>
+            <p class="text-2xl font-semibold">
+              {current.wind.speed}
+              <span class="text-xl"> {t.units.kmh}</span>
+            </p>
           </div>
 
           <div class="glass rounded-2xl p-4 text-center">
@@ -184,7 +203,7 @@ export default function WeatherPage() {
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"
               />
             </svg>
             {current.rainfall > 0 ? (

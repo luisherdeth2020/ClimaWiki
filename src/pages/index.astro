@@ -1,17 +1,46 @@
 ---
 /**
- * Home Page - Current Weather & Hourly Forecast
+ * Home Page - Smart Router
  *
- * This is the main screen of ClimaWiki showing:
- * - Current location and last update time
- * - Large temperature display
- * - Weather condition
- * - High/Low for the day
- * - Key metrics (Feels Like, Wind, Rain)
- * - Hourly forecast for next 24 hours
- * - Air quality indicator
+ * This page intelligently routes users:
+ * - First-time visitors → Welcome screen
+ * - Returning users with saved location → Weather page
  */
 
-// Just redirect to welcome page
-return Astro.redirect("/welcome");
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
+
+<BaseLayout title="ClimaWiki - Weather Forecast You Can Trust">
+  <!-- Loading state while routing decision is made -->
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="text-center">
+      <div class="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-gray-400 text-sm">Cargando...</p>
+    </div>
+  </div>
+  
+  <script>
+    // Client-side routing based on localStorage
+    (function() {
+      const savedLocations = localStorage.getItem('climawiki_favorites');
+      
+      if (savedLocations) {
+        try {
+          const locations = JSON.parse(savedLocations);
+          
+          if (locations && locations.length > 0) {
+            // User has saved locations - redirect to first saved location
+            const firstLocation = locations[0];
+            window.location.replace(`/weather?lat=${firstLocation.lat}&lon=${firstLocation.lon}&name=${encodeURIComponent(firstLocation.name)}`);
+            return;
+          }
+        } catch (e) {
+          console.error('Failed to parse saved locations:', e);
+        }
+      }
+      
+      // First-time user or no saved locations - show welcome
+      window.location.replace('/welcome');
+    })();
+  </script>
+</BaseLayout>

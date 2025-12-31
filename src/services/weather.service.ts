@@ -27,7 +27,6 @@ if (!API_KEY && typeof window !== "undefined") {
 }
 
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
-const ONE_CALL_URL = "https://api.openweathermap.org/data/3.0/onecall";
 
 // ============================================
 // HELPER FUNCTIONS
@@ -60,26 +59,31 @@ function getForecastConfidence(daysAhead: number): ForecastConfidence {
 /**
  * Transform weather data into hourly forecast format
  * Centralizes the mapping logic to avoid duplication
- * 
+ *
  * @param time - The timestamp for this forecast slot
  * @param temp - Temperature in Celsius
  * @param icon - OpenWeatherMap icon code
  * @param precipitation - Precipitation probability (0-1 or 0-100)
  * @param windSpeedMs - Wind speed in m/s
+ * @param humidity - Humidity percentage
  */
 function mapToHourlyFormat(
   time: Date,
   temp: number,
   icon: string,
   precipitation: number,
-  windSpeedMs: number
+  windSpeedMs: number,
+  humidity: number
 ) {
   return {
     time,
     temp: Math.round(temp),
     icon,
-    precipitation: Math.round(precipitation >= 1 ? precipitation : precipitation * 100),
+    precipitation: Math.round(
+      precipitation >= 1 ? precipitation : precipitation * 100
+    ),
     windSpeed: msToKmh(windSpeedMs),
+    humidity: Math.round(humidity),
   };
 }
 
@@ -161,12 +165,12 @@ export async function fetchCompleteWeather(
 
     /**
      * Build hourly forecast array for next 24 hours
-     * 
+     *
      * OpenWeatherMap free tier provides forecast in 3-hour intervals.
      * To show current conditions as "Now", we combine:
      * - Current weather (actual conditions right now)
      * - Next 7 forecast slots (3h intervals = 21h coverage)
-     * 
+     *
      * Result: 8 time slots covering ~24 hours starting from now
      */
     const hourlyForecasts = [
@@ -176,18 +180,22 @@ export async function fetchCompleteWeather(
         currentData.main.temp,
         currentData.weather[0].icon,
         forecastData.list[0]?.pop || 0,
-        currentData.wind.speed
+        currentData.wind.speed,
+        currentData.main.humidity
       ),
       // Future forecast slots (3h intervals)
-      ...forecastData.list.slice(0, 7).map((item) =>
-        mapToHourlyFormat(
-          unixToDate(item.dt),
-          item.main.temp,
-          item.weather[0].icon,
-          item.pop,
-          item.wind.speed
-        )
-      ),
+      ...forecastData.list
+        .slice(0, 7)
+        .map((item) =>
+          mapToHourlyFormat(
+            unixToDate(item.dt),
+            item.main.temp,
+            item.weather[0].icon,
+            item.pop,
+            item.wind.speed,
+            item.main.humidity
+          )
+        ),
     ];
 
     // Group forecast by day for daily forecast
@@ -218,6 +226,7 @@ export async function fetchCompleteWeather(
           }) || items[0];
 
         const avgPop = items.reduce((sum, i) => sum + i.pop, 0) / items.length;
+        const avgHumidity = items.reduce((sum, i) => sum + i.main.humidity, 0) / items.length;
 
         return {
           date: new Date(dateStr),
@@ -226,6 +235,7 @@ export async function fetchCompleteWeather(
           condition: middayItem.weather[0].main,
           icon: middayItem.weather[0].icon,
           precipitation: Math.round(avgPop * 100),
+          humidity: Math.round(avgHumidity),
           confidence: getForecastConfidence(index),
         };
       });

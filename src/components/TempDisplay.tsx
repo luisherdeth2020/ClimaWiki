@@ -1,7 +1,7 @@
 /**
  * TempDisplay - Reactive temperature display component
  * Automatically converts and updates when temperature unit setting changes
- * 
+ *
  * Uses Nano Stores for reliable reactivity in Astro (works in both dev and production)
  */
 
@@ -32,13 +32,11 @@ export default function TempDisplay({
 }: TempDisplayProps) {
   // useStore subscribes to the atom and re-renders on changes
   const unit = useStore(temperatureUnit);
-  
-  const displayTemp = unit === "fahrenheit" 
-    ? celsiusToFahrenheit(temp) 
-    : temp;
-  
+
+  const displayTemp = unit === "fahrenheit" ? celsiusToFahrenheit(temp) : temp;
+
   const symbol = unit === "fahrenheit" ? "F" : "C";
-  
+
   return (
     <span class={className}>
       {displayTemp.toFixed(decimals)}°{symbol}

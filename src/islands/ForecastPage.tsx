@@ -8,7 +8,6 @@ import { fetchCompleteWeather } from "../services/weather.service";
 import {
   formatDayName,
   formatPrecipitation,
-  getConfidenceIndicator,
 } from "../utils/format";
 import { getWeatherEmoji } from "../utils/weather-icons";
 import type { ProcessedWeatherData, Location } from "../types/weather";
@@ -142,7 +141,9 @@ export default function ForecastPage() {
           </div>
 
           <div class="flex items-baseline gap-2 mb-2">
-            <span class="text-6xl font-light">{<TempDisplay temp={current.temp} />}</span>
+            <span class="text-6xl font-light">
+              {<TempDisplay temp={current.temp} />}
+            </span>
             <span class="text-xl text-gray-400">
               {translateCondition(current.condition, currentLanguage.value)}
             </span>
@@ -191,44 +192,58 @@ export default function ForecastPage() {
               {/* Temps & Precip */}
               <div class="text-right">
                 <div class="flex items-center gap-3 mb-1">
-                  <span class="text-gray-400">{<TempDisplay temp={day.tempMin} />}</span>
+                  <span class="text-gray-400">
+                    {<TempDisplay temp={day.tempMin} />}
+                  </span>
                   <span class="text-xl font-semibold">
                     {<TempDisplay temp={day.tempMax} />}
                   </span>
                 </div>
-                {day.precipitation > 20 && (
-                  <div class="flex items-center gap-1 text-sm text-blue-400">
+
+                {/* Precipitation and Humidity row */}
+                <div class="flex items-center gap-3 justify-end mb-1">
+                  {day.precipitation > 20 && (
+                    <div class="flex items-center gap-1 text-xs text-blue-400">
+                      <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"
+                        />
+                      </svg>
+                      <span>{formatPrecipitation(day.precipitation)}</span>
+                    </div>
+                  )}
+
+                  {/* Humidity */}
+                  <div class="flex items-center gap-1 text-xs text-purple-400">
                     <svg
-                      class="w-4 h-4"
-                      fill="none"
+                      class="w-3.5 h-3.5"
                       viewBox="0 0 24 24"
+                      fill="none"
                       stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-                      />
+                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
                     </svg>
-                    <span>{formatPrecipitation(day.precipitation)}</span>
+                    <span>{day.humidity}%</span>
                   </div>
-                )}
-                {day.confidence === "high" && (
-                  <div class="flex items-center gap-1 mt-1">
-                    <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                    <span class="text-xs text-green-400">
-                      {t.forecast.confidenceHigh}
-                    </span>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* EXTENDED FORECAST Section (Decreasing Confidence) */}
+      {/* EXTENDED FORECAST Section (Decreasing Confidence) sábado/Domingo */}
       <section class="px-4 mb-6">
         <div class="flex items-center justify-between mb-3">
           <h2 class="text-xs uppercase tracking-wide text-gray-400 font-semibold">
@@ -253,75 +268,57 @@ export default function ForecastPage() {
         </div>
 
         <div class="space-y-2">
-          {[...mediumConfidenceDays, ...lowConfidenceDays].map((day) => {
-            const confidence = getConfidenceIndicator(day.confidence);
-            const isLowConfidence = day.confidence === "low";
+          {[...mediumConfidenceDays, ...lowConfidenceDays].map((day) => (
+            <div
+              key={day.date.toString()}
+              class="glass rounded-2xl p-4 flex items-center justify-between"
+            >
+              {/* Day */}
+              <div class="flex-1">
+                <p class="font-medium text-lg">
+                  {formatDayName(day.date, new Date(), {
+                    today: t.forecast.today,
+                    tomorrow: t.forecast.tomorrow,
+                  })}
+                </p>
+                <p class="text-sm text-gray-400">
+                  {translateCondition(day.condition, currentLanguage.value)}
+                </p>
+              </div>
 
-            return (
-              <div
-                key={day.date.toString()}
-                class={`glass rounded-2xl p-4 flex items-center justify-between ${
-                  isLowConfidence ? "border-yellow-500/30" : ""
-                }`}
-              >
-                {/* Day */}
-                <div class="flex-1">
-                  <p class="font-medium text-lg">
-                    {formatDayName(day.date, new Date(), {
-                      today: t.forecast.today,
-                      tomorrow: t.forecast.tomorrow,
-                    })}
-                  </p>
-                  <p class="text-sm text-gray-400">
-                    {translateCondition(day.condition, currentLanguage.value)}
-                  </p>
+              {/* Icon */}
+              <div class="mx-4 text-4xl">{getWeatherEmoji(day.icon)}</div>
+
+              {/* Temps & Humidity */}
+              <div class="text-right">
+                {/* Temperature */}
+                <div class="flex items-center gap-3 mb-1">
+                  <span class="text-gray-400">
+                    {<TempDisplay temp={day.tempMin} />}
+                  </span>
+                  <span class="text-xl font-semibold">
+                    {<TempDisplay temp={day.tempMax} />}
+                  </span>
                 </div>
 
-                {/* Icon */}
-                <div class="mx-4 text-4xl">{getWeatherEmoji(day.icon)}</div>
-
-                {/* Temps & Confidence */}
-                <div class="text-right">
-                  {/* Show range for low confidence */}
-                  {isLowConfidence ? (
-                    <div class="mb-1">
-                      <p class="text-sm text-gray-400">
-                        {t.forecast.tempRange}
-                      </p>
-                      <p class="text-lg font-semibold">
-                        {<TempDisplay temp={day.tempMin} />} — {<TempDisplay temp={day.tempMax} />}
-                      </p>
-                    </div>
-                  ) : (
-                    <div class="flex items-center gap-3 mb-1">
-                      <span class="text-gray-400">
-                        {<TempDisplay temp={day.tempMin} />}
-                      </span>
-                      <span class="text-xl font-semibold">
-                        {<TempDisplay temp={day.tempMax} />}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Confidence Indicator */}
-                  <div class="flex items-center justify-end gap-1 mt-2">
-                    <div
-                      class={`w-1.5 h-1.5 rounded-full ${
-                        day.confidence === "medium"
-                          ? "bg-yellow-500"
-                          : "bg-orange-500"
-                      }`}
-                    ></div>
-                    <span class={`text-xs ${confidence.color}`}>
-                      {day.confidence === "medium"
-                        ? t.forecast.confidenceMedium
-                        : t.forecast.confidenceLow}
-                    </span>
-                  </div>
+                {/* Humidity indicator */}
+                <div class="flex items-center justify-end gap-1">
+                  <svg
+                    class="w-3.5 h-3.5 text-purple-400"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                  </svg>
+                  <span class="text-xs text-purple-400">{day.humidity}%</span>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </section>
 
